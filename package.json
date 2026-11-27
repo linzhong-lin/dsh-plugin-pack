@@ -1,0 +1,13 @@
+{
+  "name": "dsh-plugin-pack",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DSH 插件合集：一条链接装齐 dsh-soul-md / dsh-context / billion-context / dsh-genui / dsh-speak-up / modlens 等（清单 + 一键安装脚本，不含插件源码）",
+  "type": "module",
+  "license": "MIT",
+  "keywords": ["dsh", "deepseek-harness", "plugins", "installer"],
+  "files": ["README.md", "LICENSE", "install.ps1", "plugins.json"],
+  "scripts": {
+    "dry-run": "powershell -NoProfile -ExecutionPolicy Bypass -File ./install.ps1 -DryRun"
+  }
+}
