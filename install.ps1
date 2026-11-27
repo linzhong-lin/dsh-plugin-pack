@@ -55,12 +55,17 @@ function Resolve-DshCli {
 }
 
 function Invoke-Install($cli, [string]$spec) {
+  $dshArgs = @('plugin', '--profile', $Profile, 'add', $spec)
   if ($cli.kind -eq 'dsh') {
-    & $cli.path plugin --profile $Profile add $spec
-    return $LASTEXITCODE
+    $out = & $cli.path @dshArgs 2>&1
+  } else {
+    $out = & $cli.path -y '@deepseek-ai/dsh@latest' @dshArgs 2>&1
   }
-  & $cli.path -y '@deepseek-ai/dsh@latest' plugin --profile $Profile add $spec
-  return $LASTEXITCODE
+  $code = $LASTEXITCODE
+  foreach ($line in @($out)) {
+    Write-Host ('   ' + [string]$line) -ForegroundColor DarkGray
+  }
+  return $code
 }
 
 Write-Host ''
