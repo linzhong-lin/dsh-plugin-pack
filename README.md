@@ -13,14 +13,20 @@
 irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
 ```
 
-网络抽风打不开 raw 的话，换成这两个镜像地址之一，内容一样：
+网络抽风打不开 raw 的话，换成这两个地址之一，内容一样：
 
 ```powershell
-irm https://cdn.jsdelivr.net/gh/linzhong-lin/dsh-plugin-pack@main/install.ps1 | iex
+irm https://github.com/linzhong-lin/dsh-plugin-pack/raw/main/install.ps1 | iex
 ```
 
 ```powershell
 irm https://gh-proxy.com/https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+```
+
+再不行（PowerShell 报 `基础连接已经关闭` / `无法连接到远程服务器`，多半是本机代理或 TLS 的问题），直接用 curl 拉下来交给 PowerShell：
+
+```powershell
+curl.exe -sL https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | powershell -NoProfile -ExecutionPolicy Bypass -Command -
 ```
 
 想改配置档 / 跳过某些插件（先设环境变量，再跑同一行）：
@@ -52,6 +58,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Profile deskt
 ```
 
 脚本会先找 `dsh` 命令；找不到就用 `npx -y @deepseek-ai/dsh@latest`，两者都没有就打印插件名，让你在 DSH 的「插件」页手动粘贴。
+
+> 改完脚本看不到新内容？raw.githubusercontent 和 jsdelivr 都有几分钟 CDN 缓存，`?v=` 也刷不掉。等几分钟，或者用上面 `github.com/.../raw/main/...` 那个地址（不走 jsdelivr），或者用 curl 那条。
 
 ---
 
