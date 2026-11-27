@@ -10,17 +10,23 @@
 ## 一条命令装齐（Windows）
 
 ```powershell
-irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+$p = "$env:TEMP\dsh-pack.ps1"; irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 -OutFile $p; powershell -NoProfile -ExecutionPolicy Bypass -File $p
+```
+
+非要一行 `iex` 也行（脚本带 BOM，`iex` 会把 BOM 当命令名报一行错，所以先把 BOM 去掉）：
+
+```powershell
+iex ((irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1) -replace [string][char]0xFEFF, '')
 ```
 
 网络抽风打不开 raw 的话，换成这两个地址之一，内容一样：
 
 ```powershell
-irm https://github.com/linzhong-lin/dsh-plugin-pack/raw/main/install.ps1 | iex
+$p = "$env:TEMP\dsh-pack.ps1"; irm https://github.com/linzhong-lin/dsh-plugin-pack/raw/main/install.ps1 -OutFile $p; powershell -NoProfile -ExecutionPolicy Bypass -File $p
 ```
 
 ```powershell
-irm https://gh-proxy.com/https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+$p = "$env:TEMP\dsh-pack.ps1"; irm https://gh-proxy.com/https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 -OutFile $p; powershell -NoProfile -ExecutionPolicy Bypass -File $p
 ```
 
 再不行（PowerShell 报 `基础连接已经关闭` / `无法连接到远程服务器`，多半是本机代理或 TLS 的问题），直接用 curl 拉下来交给 PowerShell：
@@ -33,21 +39,21 @@ curl.exe -sL https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main
 
 ```powershell
 $env:DSH_PROFILE = 'desktop'; $env:DSH_PACK_SKIP = 'dsh-pet,dshmarket'
-irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+$p = "$env:TEMP\dsh-pack.ps1"; irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 -OutFile $p; powershell -NoProfile -ExecutionPolicy Bypass -File $p
 ```
 
 只装核心（跳过宠物、挂件、市场、统计这类可选项）：
 
 ```powershell
 $env:DSH_PACK_CORE = '1'
-irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+$p = "$env:TEMP\dsh-pack.ps1"; irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 -OutFile $p; powershell -NoProfile -ExecutionPolicy Bypass -File $p
 ```
 
 只想看会执行什么、不真装：
 
 ```powershell
 $env:DSH_PACK_DRY = '1'
-irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+$p = "$env:TEMP\dsh-pack.ps1"; irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 -OutFile $p; powershell -NoProfile -ExecutionPolicy Bypass -File $p
 ```
 
 把脚本存到本地跑（这种写法可以直接带参数）：
