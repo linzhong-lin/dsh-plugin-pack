@@ -13,19 +13,43 @@
 irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
 ```
 
-想改配置档 / 跳过某些插件：
+网络抽风打不开 raw 的话，换成这两个镜像地址之一，内容一样：
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1))) -Profile desktop -Skip dsh-pet,dshmarket
+irm https://cdn.jsdelivr.net/gh/linzhong-lin/dsh-plugin-pack@main/install.ps1 | iex
+```
+
+```powershell
+irm https://gh-proxy.com/https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+```
+
+想改配置档 / 跳过某些插件（先设环境变量，再跑同一行）：
+
+```powershell
+$env:DSH_PROFILE = 'desktop'; $env:DSH_PACK_SKIP = 'dsh-pet,dshmarket'
+irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
 ```
 
 只装核心（跳过宠物、挂件、市场、统计这类可选项）：
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1))) -CoreOnly
+$env:DSH_PACK_CORE = '1'
+irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
 ```
 
-只想看会执行什么、不真装：再加 `-DryRun`。
+只想看会执行什么、不真装：
+
+```powershell
+$env:DSH_PACK_DRY = '1'
+irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+```
+
+把脚本存到本地跑（这种写法可以直接带参数）：
+
+```powershell
+irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 -OutFile install.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Profile desktop -Skip dsh-pet -CoreOnly -DryRun
+```
 
 脚本会先找 `dsh` 命令；找不到就用 `npx -y @deepseek-ai/dsh@latest`，两者都没有就打印插件名，让你在 DSH 的「插件」页手动粘贴。
 
