@@ -1,0 +1,121 @@
+{
+  "generatedAt": "2026-11-27",
+  "testedOn": {
+    "dsh": "0.2.2-rc.5",
+    "profile": "desktop",
+    "os": "Windows 11 x64"
+  },
+  "install": "dsh plugin --profile <profile> add <spec> [<spec> ...]",
+  "plugins": [
+    {
+      "name": "dsh-context",
+      "spec": "dsh-context",
+      "knownGood": "0.87.0",
+      "what": "上下文洞察：每个会话的窗口占用、缓存命中、历史折叠情况，带一条 /context 命令",
+      "homepage": "https://www.npmjs.com/package/dsh-context",
+      "optional": false
+    },
+    {
+      "name": "dsh-soul-md",
+      "spec": "dsh-soul-md",
+      "knownGood": "0.12.5",
+      "what": "人设卡 + 分层长期记忆（soul:persona / soul:memory 注入到每个会话），带设置页",
+      "homepage": "https://www.npmjs.com/package/dsh-soul-md",
+      "optional": false
+    },
+    {
+      "name": "dsh-speak-up",
+      "spec": "dsh-speak-up",
+      "knownGood": "0.3.3",
+      "what": "主动搭话：没人在聊的时候自己起个话头，间隔和概率可调，掷骰子不花模型",
+      "homepage": "https://www.npmjs.com/package/dsh-speak-up",
+      "optional": false
+    },
+    {
+      "name": "dsh-genui",
+      "spec": "dsh-genui",
+      "knownGood": "0.3.4",
+      "what": "生成式 UI：让模型在回答里直接画出图表 / 表单 / 计算器卡片",
+      "homepage": "https://www.npmjs.com/package/dsh-genui",
+      "optional": false
+    },
+    {
+      "name": "billion-context",
+      "spec": "billion-context",
+      "knownGood": "0.1.216",
+      "what": "上下文压缩层（替换内置 compaction）：旧对话折成可搜索、可解压的摘要块",
+      "homepage": "https://www.npmjs.com/package/billion-context",
+      "optional": false
+    },
+    {
+      "name": "@liustack/modlens",
+      "spec": "@liustack/modlens",
+      "knownGood": "3.27.5",
+      "what": "给纯文本模型加视觉：modlens_read_image 读截图 / 照片 / 文档扫描件",
+      "homepage": "https://www.npmjs.com/package/@liustack/modlens",
+      "note": "需要配一个视觉 provider（Antigravity CLI 或自己的 key），否则调用会报没有视觉通道",
+      "optional": false
+    },
+    {
+      "name": "dsh-pet",
+      "spec": "dsh-pet",
+      "knownGood": "0.4.9",
+      "what": "桌面宠物：吃白饭的蓝色大肥鱼，会溜达、玩魔方、要零食",
+      "homepage": "https://www.npmjs.com/package/dsh-pet",
+      "note": "79 MB 解包体积，依赖里带 openai / @anthropic-ai/sdk",
+      "optional": true
+    },
+    {
+      "name": "dsh-whale-widget",
+      "spec": "dsh-whale-widget",
+      "knownGood": "0.4.2",
+      "what": "右下角余额小鲸鱼：余额 / 今日已用 / 峰谷定价 / 自定义点击气泡",
+      "homepage": "https://www.npmjs.com/package/dsh-whale-widget",
+      "optional": true
+    },
+    {
+      "name": "dshmarket",
+      "spec": "dshmarket",
+      "knownGood": "1.77.1",
+      "what": "插件市场：在 DSH 里浏览、搜索、一键装插件",
+      "homepage": "https://dshmarket.com",
+      "optional": true
+    },
+    {
+      "name": "dsh-token-diet",
+      "spec": "dsh-token-diet",
+      "knownGood": "0.1.0",
+      "what": "Token 统计与按会话预算：汇总用量与成本，预算耗尽就停任务",
+      "homepage": "https://www.npmjs.com/package/dsh-token-diet",
+      "optional": true
+    },
+    {
+      "name": "dsh-at-file",
+      "spec": "dsh-at-file",
+      "knownGood": "0.6.3",
+      "what": "@path 引用：在输入框里 @ 一个文件/目录，把它塞进上下文",
+      "homepage": "https://www.npmjs.com/package/dsh-at-file",
+      "note": "0.6.3 在 DSH 0.2.2-rc.5 上装得上但激活失败（@deepseek-ai/dsh-settings 没有 settingsNamespace 导出），默认跳过，等作者更新",
+      "optional": true,
+      "skipByDefault": true
+    }
+  ],
+  "notIncluded": [
+    {
+      "name": "dsh-qqbot",
+      "reason": "作者自研（QQ 频道），单独一个仓库：https://github.com/linzhong-lin/dsh-qqbot"
+    },
+    {
+      "name": "dsh-daily-schedule",
+      "reason": "作者改写版（接入聊天流水 / 日记 / 长期记忆），单独一个仓库：https://github.com/linzhong-lin/dsh-daily-schedule"
+    },
+    {
+      "name": "dsh-image-studio",
+      "reason": "作者改写版（重试与报错加固），单独一个仓库：https://github.com/linzhong-lin/dsh-image-studio"
+    },
+    {
+      "name": "dsh-bili-whale",
+      "reason": "B站养鱼插件，上游 MIT 项目（ALTERSSSS），不在 npm 上；装法见 README 的「养鱼插件」一节"
+    }
+  ]
+}
