@@ -1,36 +1,35 @@
-﻿<#
-  一键装齐 DSH 插件（霖栗同款清单）
-  =====================================
-  这个脚本只做一件事：按清单把插件一个个装进当前 DSH 配置档（profile）。
-
-  一行装完（Windows PowerShell）：
-      irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
-
-  换配置档 / 跳过某些插件（先设环境变量，再跑同一行）：
-      $env:DSH_PROFILE = 'desktop'
-      $env:DSH_PACK_SKIP = 'dsh-pet,dshmarket'
-      irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
-
-  只装核心（跳过宠物/挂件/市场/统计）：
-      $env:DSH_PACK_CORE = '1'; irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
-
-  只想看会执行什么、不真装：
-      $env:DSH_PACK_DRY = '1'; irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
-
-  本地跑也行（这种写法可以直接带参数）：
-      powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Profile desktop -Skip dsh-pet -CoreOnly -DryRun
-
-  可选环境变量：
-      DSH_PROFILE      配置档名，默认 desktop
-      DSH_PACK_SKIP    要跳过的插件名，逗号/空格分隔
-      DSH_PACK_CORE    =1 只装核心那几个（optional=false）
-      DSH_PACK_DRY     =1 只打印不执行
-
-  说明：
-      * 本脚本不复制任何插件源码，只调用 `dsh plugin add`，版权归各自作者。
-      * 装完要重启 DSH（或刷新面板）才会生效。
-      * dsh-at-file 默认跳过：0.6.3 在 DSH 0.2.2-rc.5 上激活失败，等作者修。
-#>
+﻿# 一键装齐 DSH 插件（霖栗同款清单）—— 用行注释，避免编码把块注释搞坏
+#   一键装齐 DSH 插件（霖栗同款清单）
+#   =====================================
+#   这个脚本只做一件事：按清单把插件一个个装进当前 DSH 配置档（profile）。
+#
+#   一行装完（Windows PowerShell）：
+#       irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+#
+#   换配置档 / 跳过某些插件（先设环境变量，再跑同一行）：
+#       $env:DSH_PROFILE = 'desktop'
+#       $env:DSH_PACK_SKIP = 'dsh-pet,dshmarket'
+#       irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+#
+#   只装核心（跳过宠物/挂件/市场/统计）：
+#       $env:DSH_PACK_CORE = '1'; irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+#
+#   只想看会执行什么、不真装：
+#       $env:DSH_PACK_DRY = '1'; irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+#
+#   本地跑也行（这种写法可以直接带参数）：
+#       powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Profile desktop -Skip dsh-pet -CoreOnly -DryRun
+#
+#   可选环境变量：
+#       DSH_PROFILE      配置档名，默认 desktop
+#       DSH_PACK_SKIP    要跳过的插件名，逗号/空格分隔
+#       DSH_PACK_CORE    =1 只装核心那几个（optional=false）
+#       DSH_PACK_DRY     =1 只打印不执行
+#
+#   说明：
+#       * 本脚本不复制任何插件源码，只调用 `dsh plugin add`，版权归各自作者。
+#       * 装完要重启 DSH（或刷新面板）才会生效。
+#       * dsh-at-file 默认跳过：0.6.3 在 DSH 0.2.2-rc.5 上激活失败，等作者修。
 
 $ErrorActionPreference = 'Stop'
 try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch { }
