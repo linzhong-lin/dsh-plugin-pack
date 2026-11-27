@@ -6,44 +6,70 @@
   一行装完（Windows PowerShell）：
       irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
 
-  想改参数（profile / 跳过某些插件）就用这行：
-      & ([scriptblock]::Create((irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1))) -Profile desktop -Skip dsh-pet,dshmarket
+  换配置档 / 跳过某些插件（先设环境变量，再跑同一行）：
+      $env:DSH_PROFILE = 'desktop'
+      $env:DSH_PACK_SKIP = 'dsh-pet,dshmarket'
+      irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
 
-  参数：
-      -Profile        配置档名，默认取 $env:DSH_PROFILE，否则 desktop
-      -Skip           要跳过的插件名（逗号分隔）
-      -CoreOnly       只装核心那几个（跳过宠物/挂件/市场/统计这类可选项）
-      -DryRun         只打印命令，不真的装
+  只装核心（跳过宠物/挂件/市场/统计）：
+      $env:DSH_PACK_CORE = '1'; irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+
+  只想看会执行什么、不真装：
+      $env:DSH_PACK_DRY = '1'; irm https://raw.githubusercontent.com/linzhong-lin/dsh-plugin-pack/main/install.ps1 | iex
+
+  本地跑也行（这种写法可以直接带参数）：
+      powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Profile desktop -Skip dsh-pet -CoreOnly -DryRun
+
+  可选环境变量：
+      DSH_PROFILE      配置档名，默认 desktop
+      DSH_PACK_SKIP    要跳过的插件名，逗号/空格分隔
+      DSH_PACK_CORE    =1 只装核心那几个（optional=false）
+      DSH_PACK_DRY     =1 只打印不执行
 
   说明：
       * 本脚本不复制任何插件源码，只调用 `dsh plugin add`，版权归各自作者。
       * 装完要重启 DSH（或刷新面板）才会生效。
       * dsh-at-file 默认跳过：0.6.3 在 DSH 0.2.2-rc.5 上激活失败，等作者修。
 #>
-[CmdletBinding()]
-param(
-  [string]$Profile = $(if ($env:DSH_PROFILE) { $env:DSH_PROFILE } else { 'desktop' }),
-  [string[]]$Skip = @(),
-  [switch]$CoreOnly,
-  [switch]$DryRun
-)
 
 $ErrorActionPreference = 'Stop'
 try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch { }
 
-# 清单：name = 包名；optional = 只有 -CoreOnly 之外才装；skip = 默认跳过
+# ---- 这个脚本故意不写 param()：`irm ... | iex` 一旦遇到 param 块就会解析失败 ----
+$Profile  = if ($env:DSH_PROFILE) { [string]$env:DSH_PROFILE } else { 'desktop' }
+$SkipRaw  = [string]$env:DSH_PACK_SKIP
+$CoreOnly = ($env:DSH_PACK_CORE -eq '1')
+$DryRun   = ($env:DSH_PACK_DRY -eq '1')
+
+$argv = @($args)
+for ($i = 0; $i -lt $argv.Count; $i++) {
+  switch -Regex ([string]$argv[$i]) {
+    '^-Profile$'  { if ($i + 1 -lt $argv.Count) { $Profile = [string]$argv[$i + 1]; $i++ } }
+    '^-Skip$'     { if ($i + 1 -lt $argv.Count) { $SkipRaw = [string]$argv[$i + 1]; $i++ } }
+    '^-CoreOnly$' { $CoreOnly = $true }
+    '^-DryRun$'   { $DryRun = $true }
+    default       { }
+  }
+}
+
+$Skip = @()
+if ($SkipRaw -and $SkipRaw.Trim() -ne '') {
+  $Skip = @($SkipRaw -split '[,;\s]+' | Where-Object { $_ -ne '' })
+}
+
+# 清单：optional = 只有 -CoreOnly 之外才装；skip = 默认跳过
 $plugins = @(
-  @{ name = 'dsh-soul-md';        optional = $false; skip = $false },
-  @{ name = 'dsh-context';        optional = $false; skip = $false },
-  @{ name = 'billion-context';    optional = $false; skip = $false },
-  @{ name = 'dsh-genui';          optional = $false; skip = $false },
-  @{ name = 'dsh-speak-up';       optional = $false; skip = $false },
-  @{ name = '@liustack/modlens';  optional = $false; skip = $false },
-  @{ name = 'dsh-token-diet';     optional = $true;  skip = $false },
-  @{ name = 'dsh-whale-widget';   optional = $true;  skip = $false },
-  @{ name = 'dshmarket';          optional = $true;  skip = $false },
-  @{ name = 'dsh-pet';            optional = $true;  skip = $false },
-  @{ name = 'dsh-at-file';        optional = $true;  skip = $true  }
+  @{ name = 'dsh-soul-md';       optional = $false; skip = $false },
+  @{ name = 'dsh-context';       optional = $false; skip = $false },
+  @{ name = 'billion-context';   optional = $false; skip = $false },
+  @{ name = 'dsh-genui';         optional = $false; skip = $false },
+  @{ name = 'dsh-speak-up';      optional = $false; skip = $false },
+  @{ name = '@liustack/modlens'; optional = $false; skip = $false },
+  @{ name = 'dsh-token-diet';    optional = $true;  skip = $false },
+  @{ name = 'dsh-whale-widget';  optional = $true;  skip = $false },
+  @{ name = 'dshmarket';         optional = $true;  skip = $false },
+  @{ name = 'dsh-pet';           optional = $true;  skip = $false },
+  @{ name = 'dsh-at-file';       optional = $true;  skip = $true  }
 )
 
 function Resolve-DshCli {
@@ -103,12 +129,11 @@ $skipped = @()
 
 foreach ($p in $plugins) {
   $name = $p.name
-  if ($p.skip -and -not $skipSet.Contains('!' + $name)) { $skipped += $name; continue }
+  if ($p.skip) { $skipped += $name; continue }
   if ($CoreOnly -and $p.optional) { $skipped += $name; continue }
   if ($skipSet.Contains($name)) { $skipped += $name; continue }
 
-  $line = ('→ {0}' -f $name)
-  Write-Host $line -ForegroundColor Cyan
+  Write-Host ('→ {0}' -f $name) -ForegroundColor Cyan
   if ($DryRun) {
     Write-Host ('   [dry-run] dsh plugin --profile {0} add {1}' -f $Profile, $name) -ForegroundColor DarkGray
     $done += $name
